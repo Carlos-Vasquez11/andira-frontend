@@ -1,0 +1,124 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* Andira Brand Colors - Single Dark Theme */
+/* Primary: Navy Blue #001F3F */
+/* Secondary: White #FFFFFF */
+/* Accent: Azure Blue #007FFF (text only) */
+
+:root {
+  /* Main colors */
+  --background: oklch(0.13 0.04 240); /* Navy Blue #001F3F */
+  --foreground: oklch(1 0 0); /* White */
+
+  /* Card colors */
+  --card: oklch(0.18 0.04 240); /* Slightly lighter navy */
+  --card-foreground: oklch(1 0 0); /* White */
+
+  /* Popover colors */
+  --popover: oklch(0.18 0.04 240);
+  --popover-foreground: oklch(1 0 0);
+
+  /* Primary button colors */
+  --primary: oklch(0.6 0.2 240); /* Azure Blue #007FFF */
+  --primary-foreground: oklch(1 0 0); /* White */
+
+  /* Secondary colors */
+  --secondary: oklch(0.22 0.04 240); /* Lighter navy */
+  --secondary-foreground: oklch(1 0 0); /* White */
+
+  /* Muted colors */
+  --muted: oklch(0.22 0.04 240);
+  --muted-foreground: oklch(0.85 0 0); /* Light gray for subtle text */
+
+  /* Accent colors - Azure Blue */
+  --accent: oklch(0.6 0.2 240); /* Azure Blue #007FFF */
+  --accent-foreground: oklch(1 0 0); /* White */
+
+  /* Destructive colors - Red */
+  --destructive: oklch(0.55 0.22 25);
+  --destructive-foreground: oklch(1 0 0);
+
+  /* Border and input */
+  --border: oklch(0.3 0.04 240); /* Navy with slight lightness */
+  --input: oklch(0.25 0.04 240);
+  --ring: oklch(0.6 0.2 240); /* Azure Blue */
+
+  /* Chart colors */
+  --chart-1: oklch(0.6 0.2 240); /* Azure Blue */
+  --chart-2: oklch(0.55 0.22 25); /* Red */
+  --chart-3: oklch(0.6 0.18 140); /* Green */
+  --chart-4: oklch(0.65 0.18 60); /* Yellow */
+  --chart-5: oklch(0.7 0.15 300); /* Purple */
+
+  --radius: 0.625rem;
+
+  /* Sidebar colors */
+  --sidebar: oklch(0.15 0.04 240);
+  --sidebar-foreground: oklch(1 0 0);
+  --sidebar-primary: oklch(0.6 0.2 240);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.22 0.04 240);
+  --sidebar-accent-foreground: oklch(1 0 0);
+  --sidebar-border: oklch(0.3 0.04 240);
+  --sidebar-ring: oklch(0.6 0.2 240);
+}
+
+@theme inline {
+  /* Adding font family configuration */
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Adding custom gradient utilities for dashboard background */
+@layer utilities {
+  .bg-gradient-radial {
+    background-image: radial-gradient(var(--tw-gradient-stops));
+  }
+}

@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { ArrowLeft, TrendingUp, TrendingDown, Construction } from "lucide-react"
+import { OrderStatusModal } from "@/components/order-status-modal"
 
 const allStocks = [
   {
@@ -298,6 +299,15 @@ export default function StockDetailPage() {
   const [exchangeRate] = useState(36.5)
 
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false)
+  const [isOrderStatusModalOpen, setIsOrderStatusModalOpen] = useState(false)
+  const [orderStatus, setOrderStatus] = useState<"loading" | "success" | "error">("loading")
+  const [orderErrorMessage, setOrderErrorMessage] = useState<string>()
+  const [orderSuccessDetails, setOrderSuccessDetails] = useState<{
+    symbol: string
+    quantity: number
+    price: number
+    total: number
+  }>()
   const [orderType, setOrderType] = useState<"buy" | "sell">("buy")
   const [inputMode, setInputMode] = useState<"nominales" | "money">("nominales")
   const [orderMode, setOrderMode] = useState<"limit" | "market">("market")
@@ -466,6 +476,75 @@ export default function StockDetailPage() {
     setLimitPrice("")
     setInputMode("nominales")
     setOrderMode("market")
+  }
+
+  const handleOrderSubmit = async () => {
+    try {
+      // Close the order modal and show loading status
+      setIsOrderModalOpen(false)
+      setOrderStatus("loading")
+      setIsOrderStatusModalOpen(true)
+
+      // Calculate order details
+      const price =
+        orderMode === "limit" && limitPrice ? Number.parseFloat(limitPrice) : bestOffer || getPrice(stock.priceUSD)
+
+      let quantity = 0
+      if (inputMode === "nominales" && nominalesInput) {
+        quantity = Number.parseFloat(nominalesInput)
+      } else if (inputMode === "money" && moneyInput) {
+        quantity = Number.parseFloat(moneyInput) / price
+      }
+
+      const total = price * quantity
+
+      // Prepare the order payload
+      const orderPayload = {
+        symbol: stock.symbol,
+        type: orderType,
+        orderMode,
+        quantity,
+        price: orderMode === "limit" ? price : undefined,
+        total,
+      }
+
+      console.log("[v0] Submitting order:", orderPayload)
+
+      // Make API call to submit order
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL
+      const response = await fetch(`${apiUrl}/orders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // Add authentication header if needed
+          // Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(orderPayload),
+      })
+
+      const data = await response.json()
+      console.log("[v0] Order response:", data)
+
+      if (response.ok) {
+        // Order successful
+        setOrderStatus("success")
+        setOrderSuccessDetails({
+          symbol: stock.symbol,
+          quantity,
+          price,
+          total,
+        })
+        setOrderErrorMessage(undefined)
+      } else {
+        // Order failed
+        setOrderStatus("error")
+        setOrderErrorMessage(data.message || "No se pudo procesar la orden")
+      }
+    } catch (error) {
+      console.error("[v0] Order submission error:", error)
+      setOrderStatus("error")
+      setOrderErrorMessage("Error de conexión. Por favor verifica tu conexión a internet e intenta de nuevo.")
+    }
   }
 
   return (
@@ -937,16 +1016,23 @@ export default function StockDetailPage() {
                 orderType === "buy" ? "bg-green-700 hover:bg-green-800" : "bg-red-700 hover:bg-red-800"
               }`}
               disabled={!isOrderValid()}
-              onClick={() => {
-                // Handle order submission
-                setIsOrderModalOpen(false)
-              }}
+              onClick={handleOrderSubmit}
             >
               Confirmar {orderType === "buy" ? "Compra" : "Venta"}
             </Button>
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Order Status Modal */}
+      <OrderStatusModal
+        open={isOrderStatusModalOpen}
+        onOpenChange={setIsOrderStatusModalOpen}
+        status={orderStatus}
+        orderType={orderType}
+        errorMessage={orderErrorMessage}
+        successDetails={orderSuccessDetails}
+      />
 
       {/* Mobile Footer Navigation */}
       <MobileFooterNav />

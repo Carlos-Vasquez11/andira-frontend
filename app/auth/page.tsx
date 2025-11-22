@@ -180,6 +180,18 @@ export default function AuthPage() {
             <p className="text-muted-foreground">Accede a tu cuenta o crea una nueva para comenzar a invertir</p>
           </div>
 
+          <Alert className="mb-4 border-blue-500/50 bg-blue-500/10">
+            <AlertDescription className="text-center">
+              <p className="font-semibold text-blue-400 mb-1">Demo de Prueba</p>
+              <p className="text-sm text-blue-300">
+                Email: <code className="bg-blue-950/50 px-2 py-0.5 rounded">demo@kairos.com</code>
+              </p>
+              <p className="text-sm text-blue-300">
+                Password: <code className="bg-blue-950/50 px-2 py-0.5 rounded">demo123</code>
+              </p>
+            </AlertDescription>
+          </Alert>
+
           <Card>
             <CardHeader>
               <CardTitle className="text-center">Acceso a tu cuenta</CardTitle>

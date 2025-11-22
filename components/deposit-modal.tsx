@@ -16,6 +16,7 @@ export function DepositModal({ isOpen, onClose }: DepositModalProps) {
   const [currency, setCurrency] = useState<"Bolívares" | "USDT">("Bolívares")
   const [copiedField, setCopiedField] = useState<string | null>(null)
   const [showVerificationModal, setShowVerificationModal] = useState(false)
+  const [verificationCurrency, setVerificationCurrency] = useState<"Bolívares" | "USDT">("Bolívares")
 
   const userBankAccount = {
     bank: "Bancaribe",
@@ -43,6 +44,11 @@ export function DepositModal({ isOpen, onClose }: DepositModalProps) {
     network: "TRC20 (Tron)",
     walletAddress: "TXYZabc123def456ghi789jkl012mno345pqr678",
     minimumDeposit: "10 USDT",
+  }
+
+  const handleAcreditarFondos = () => {
+    setVerificationCurrency(currency)
+    setShowVerificationModal(true)
   }
 
   return (
@@ -244,18 +250,28 @@ export function DepositModal({ isOpen, onClose }: DepositModalProps) {
             )}
 
             <div className="border-t border-border pt-4">
-              <button
-                onClick={() => setShowVerificationModal(true)}
-                className="text-sm text-accent hover:text-accent/80 underline transition-colors"
+              <p className="text-sm text-muted-foreground text-center">
+                ¿Realizaste la transferencia y no has recibido el dinero?
+              </p>
+            </div>
+
+            <div className="flex justify-center pb-2">
+              <Button
+                onClick={handleAcreditarFondos}
+                className="w-full max-w-md bg-accent hover:bg-accent/90 text-accent-foreground font-semibold"
               >
-                ¿Realizaste una transferencia hace más de 4 horas y no has recibido el dinero?
-              </button>
+                Acreditar Fondos
+              </Button>
             </div>
           </div>
         </DialogContent>
       </Dialog>
 
-      <TransferVerificationModal isOpen={showVerificationModal} onClose={() => setShowVerificationModal(false)} />
+      <TransferVerificationModal
+        isOpen={showVerificationModal}
+        onClose={() => setShowVerificationModal(false)}
+        currency={verificationCurrency}
+      />
     </>
   )
 }

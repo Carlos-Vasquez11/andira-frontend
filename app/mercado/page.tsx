@@ -8,7 +8,16 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Search, TrendingUp, TrendingDown, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react"
+import {
+  Search,
+  TrendingUp,
+  TrendingDown,
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react"
 
 const allStocks = [
   {
@@ -99,6 +108,8 @@ const allStocks = [
 
 type SortOption = "alphabetical" | "variation-high" | "variation-low" | "none"
 
+const ITEMS_PER_PAGE = 15
+
 export default function MercadoPage() {
   const router = useRouter()
   const [user, setUser] = useState<any>(null)
@@ -107,6 +118,7 @@ export default function MercadoPage() {
   const [sortBy, setSortBy] = useState<SortOption>("none")
   const [currency, setCurrency] = useState<"USD" | "VEF">("USD")
   const [exchangeRate] = useState(36.5)
+  const [currentPage, setCurrentPage] = useState(1)
 
   useEffect(() => {
     const checkAuth = () => {
@@ -190,6 +202,10 @@ export default function MercadoPage() {
     router.push(`/mercado/${stock.symbol}`)
   }
 
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [searchQuery, sortBy])
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -205,7 +221,40 @@ export default function MercadoPage() {
     return null
   }
 
-  const displayedStocks = filteredAndSortedStocks()
+  const allFilteredStocks = filteredAndSortedStocks()
+  const totalPages = Math.ceil(allFilteredStocks.length / ITEMS_PER_PAGE)
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
+  const endIndex = startIndex + ITEMS_PER_PAGE
+  const displayedStocks = allFilteredStocks.slice(startIndex, endIndex)
+
+  const getPageNumbers = () => {
+    if (totalPages <= 5) {
+      // Show all pages if 5 or fewer
+      return Array.from({ length: totalPages }, (_, i) => i + 1)
+    }
+
+    const pages: (number | string)[] = []
+
+    if (currentPage <= 3) {
+      // Near the start: show 1, 2, 3, 4, 5, ..., last
+      pages.push(1, 2, 3, 4, 5)
+      if (totalPages > 5) {
+        pages.push("ellipsis-end")
+      }
+    } else if (currentPage >= totalPages - 2) {
+      // Near the end: show 1, ..., last-4, last-3, last-2, last-1, last
+      pages.push(1)
+      if (totalPages > 5) {
+        pages.push("ellipsis-start")
+      }
+      pages.push(totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages)
+    } else {
+      // In the middle: show 1, ..., current-1, current, current+1, ..., last
+      pages.push(1, "ellipsis-start", currentPage - 1, currentPage, currentPage + 1, "ellipsis-end")
+    }
+
+    return pages
+  }
 
   return (
     <div className="min-h-screen bg-background relative">
@@ -343,6 +392,63 @@ export default function MercadoPage() {
               </Card>
             )}
           </div>
+
+          {totalPages > 0 && (
+            <div className="mt-6 md:mt-8 flex items-center justify-center">
+              <div className="flex items-center gap-1 md:gap-2 bg-card/50 backdrop-blur-sm border border-white/20 rounded-lg p-1.5 md:p-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  className="h-8 w-8 md:h-9 md:w-9 p-0 hover:bg-primary/10 disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+
+                <div className="flex items-center gap-1">
+                  {getPageNumbers().map((page, index) => {
+                    if (typeof page === "string") {
+                      return (
+                        <div
+                          key={`${page}-${index}`}
+                          className="flex items-center justify-center h-8 w-8 md:h-9 md:w-9 text-muted-foreground"
+                        >
+                          •••
+                        </div>
+                      )
+                    }
+
+                    return (
+                      <Button
+                        key={page}
+                        variant={currentPage === page ? "default" : "ghost"}
+                        size="sm"
+                        onClick={() => setCurrentPage(page)}
+                        className={`h-8 w-8 md:h-9 md:w-9 p-0 font-semibold transition-all ${
+                          currentPage === page
+                            ? "bg-primary text-primary-foreground shadow-md scale-105"
+                            : "hover:bg-primary/10 text-foreground"
+                        }`}
+                      >
+                        {page}
+                      </Button>
+                    )
+                  })}
+                </div>
+
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                  disabled={currentPage === totalPages}
+                  className="h-8 w-8 md:h-9 md:w-9 p-0 hover:bg-primary/10 disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

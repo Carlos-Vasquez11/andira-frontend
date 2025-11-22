@@ -497,7 +497,7 @@ export default function DashboardPage() {
 
       {/* Stock Details Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-2xl flex items-center space-x-3">
               <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center overflow-hidden border-2 border-border shadow-sm">

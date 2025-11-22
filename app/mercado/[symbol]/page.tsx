@@ -11,9 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { ArrowLeft, TrendingUp, TrendingDown, Construction, Loader2, CheckCircle2, XCircle } from "lucide-react"
-import { config } from "@/lib/config"
-import { calculateCommissionAmount, type UserType } from "@/lib/tariffs"
+import { ArrowLeft, TrendingUp, TrendingDown, Construction } from "lucide-react"
 
 const allStocks = [
   {
@@ -300,9 +298,6 @@ export default function StockDetailPage() {
   const [exchangeRate] = useState(36.5)
 
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false)
-  const [isOrderStatusModalOpen, setIsOrderStatusModalOpen] = useState(false)
-  const [orderStatus, setOrderStatus] = useState<"loading" | "success" | "error">("loading")
-  const [orderErrorMessage, setOrderErrorMessage] = useState("")
   const [orderType, setOrderType] = useState<"buy" | "sell">("buy")
   const [inputMode, setInputMode] = useState<"nominales" | "money">("nominales")
   const [orderMode, setOrderMode] = useState<"limit" | "market">("market")
@@ -311,7 +306,6 @@ export default function StockDetailPage() {
   const [limitPrice, setLimitPrice] = useState("")
   const [availableBalance] = useState(10000) // Mock available balance in USD
   const [availableShares] = useState(150) // Mock available shares
-  const [userType] = useState<UserType>("personaNatural")
 
   const stock = allStocks.find((s) => s.symbol === symbol)
 
@@ -413,71 +407,20 @@ export default function StockDetailPage() {
     return Math.floor(availableBalance / price)
   }
 
-  const matchOrdersFromBook = (requestedNominals: number, orders: Array<{ precio: number; nominales: number }>) => {
-    let remainingNominals = requestedNominals
-    let totalCost = 0
-    const matchedOrders: Array<{ precio: number; nominales: number }> = []
-
-    for (const order of orders) {
-      if (remainingNominals <= 0) break
-
-      const nominalsToTake = Math.min(remainingNominals, order.nominales)
-      totalCost += nominalsToTake * order.precio
-      matchedOrders.push({ precio: order.precio, nominales: nominalsToTake })
-      remainingNominals -= nominalsToTake
-    }
-
-    return { totalCost, matchedOrders, remainingNominals }
-  }
-
   const calculateTotal = () => {
-    let baseAmount = 0
-    let requestedNominals = 0
-    let estimatedNominals = 0
+    const price =
+      orderMode === "limit" && limitPrice ? Number.parseFloat(limitPrice) : bestOffer || getPrice(stock.priceUSD)
 
-    // Determine the number of nominals requested
     if (inputMode === "nominales" && nominalesInput) {
-      requestedNominals = Number.parseFloat(nominalesInput)
+      return price * Number.parseFloat(nominalesInput)
     } else if (inputMode === "money" && moneyInput) {
-      // For money mode, calculate how many nominals can be bought/sold
-      const moneyAmount = Number.parseFloat(moneyInput)
-      const ordersToMatch = orderType === "buy" ? sellOrders : buyOrders
-
-      // Calculate estimated nominals that can be bought/sold with this money
-      let remainingMoney = moneyAmount
-      let calculatedNominals = 0
-
-      for (const order of ordersToMatch) {
-        if (remainingMoney <= 0) break
-        const nominalsFromThisOrder = Math.min(order.nominales, remainingMoney / order.precio)
-        calculatedNominals += nominalsFromThisOrder
-        remainingMoney -= nominalsFromThisOrder * order.precio
-      }
-
-      estimatedNominals = Math.floor(calculatedNominals)
-      requestedNominals = estimatedNominals
-    } else {
-      return { baseAmount: 0, commission: 0, total: 0, estimatedNominals: 0 }
+      return Number.parseFloat(moneyInput)
     }
-
-    // Match orders from the order book
-    const ordersToMatch = orderType === "buy" ? sellOrders : buyOrders
-    const { totalCost } = matchOrdersFromBook(requestedNominals, ordersToMatch)
-
-    baseAmount = totalCost
-
-    // Calculate commission
-    const commission = calculateCommissionAmount(baseAmount, userType)
-
-    // For sell orders, subtract commission (user receives less)
-    // For buy orders, add commission (user pays more)
-    const total = orderType === "sell" ? baseAmount - commission : baseAmount + commission
-
-    return { baseAmount, commission, total, estimatedNominals }
+    return 0
   }
 
   const isOrderValid = () => {
-    const { total } = calculateTotal()
+    const total = calculateTotal()
 
     if (orderType === "buy") {
       return total > 0 && total <= availableBalance
@@ -525,66 +468,11 @@ export default function StockDetailPage() {
     setOrderMode("market")
   }
 
-  const handleOrderSubmit = async () => {
-    setIsOrderModalOpen(false)
-    setOrderStatus("loading")
-    setIsOrderStatusModalOpen(true)
-
-    try {
-      const { baseAmount } = calculateTotal()
-
-      const orderData = {
-        symbol: stock.symbol,
-        type: orderType,
-        orderMode: orderMode,
-        inputMode: inputMode,
-        nominales: inputMode === "nominales" ? Number.parseFloat(nominalesInput) : undefined,
-        amount: baseAmount,
-        limitPrice: orderMode === "limit" && limitPrice ? Number.parseFloat(limitPrice) : undefined,
-        currency: currency,
-      }
-
-      console.log("[v0] Submitting order:", orderData)
-
-      const response = await fetch(`${config.api.baseUrl}/orders`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("kairos_token")}`,
-        },
-        body: JSON.stringify(orderData),
-      })
-
-      console.log("[v0] Order response status:", response.status)
-
-      if (response.status === 201) {
-        setOrderStatus("success")
-      } else {
-        const errorData = await response.json()
-        setOrderErrorMessage(errorData.message || "Error al procesar la orden")
-        setOrderStatus("error")
-      }
-    } catch (error) {
-      console.error("[v0] Order submission error:", error)
-      setOrderErrorMessage("Error de conexión. Por favor, intenta nuevamente.")
-      setOrderStatus("error")
-    }
-  }
-
-  const handleCloseStatusModal = () => {
-    setIsOrderStatusModalOpen(false)
-    setNominalesInput("")
-    setMoneyInput("")
-    setLimitPrice("")
-    setInputMode("nominales")
-    setOrderMode("market")
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a1628] via-[#0f2744] to-[#1a3a5c] relative">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-purple-900/20 via-transparent to-transparent pointer-events-none" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_var(--tw-gradient-stops))] from-blue-900/20 via-transparent to-transparent pointer-events-none" />
-      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMDMpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAl')] opacity-30 pointer-events-none" />
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDQwIDAgTCAwIDAgMCA0MCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMDMpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-30 pointer-events-none" />
 
       <div className="relative z-10">
         <DashboardHeader user={user} />
@@ -825,7 +713,7 @@ export default function StockDetailPage() {
                       Ofertas de mercado
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-3 sm:space-4 p-3 sm:p-4 md:p-6">
+                  <CardContent className="space-y-3 sm:space-y-4 p-3 sm:p-4 md:p-6">
                     {/* Order Book */}
                     <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4">
                       {/* Sell Orders */}
@@ -1021,61 +909,20 @@ export default function StockDetailPage() {
               </CardContent>
             </Card>
 
-            {/* Total Calculation Card */}
+            {/* Estimated Total */}
             <Card
-              className={`border ${!isOrderValid() && calculateTotal().total > 0 ? "bg-red-900/20 border-red-700/50" : "bg-primary/10 border-primary/30"}`}
+              className={`border ${!isOrderValid() && calculateTotal() > 0 ? "bg-red-900/20 border-red-700/50" : "bg-primary/10 border-primary/30"}`}
             >
               <CardContent className="p-2 sm:p-3">
-                <div className="space-y-2">
-                  {/* Estimated nominals for both buy and sell orders with money mode */}
-                  {inputMode === "money" && calculateTotal().estimatedNominals > 0 && (
-                    <>
-                      <div className="flex justify-between items-center pb-3 mb-2 border-b border-white/20">
-                        <span className="text-xs sm:text-sm text-foreground font-medium">
-                          {orderType === "buy"
-                            ? "Cantidad Estimada de Nominales a Comprar"
-                            : "Cantidad Estimada de Nominales a Vender"}
-                        </span>
-                        <span className="font-semibold text-sm sm:text-base text-foreground">
-                          {calculateTotal().estimatedNominals}
-                        </span>
-                      </div>
-                    </>
-                  )}
-
-                  {/* Price breakdown */}
-                  <div className="space-y-1 pb-2 border-b border-white/10">
-                    <div className="flex justify-between items-center">
-                      <span className="text-[10px] sm:text-xs text-muted-foreground/80">Subtotal</span>
-                      <span className="text-[10px] sm:text-xs text-muted-foreground/80">
-                        {formatCurrency(calculateTotal().baseAmount)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-[10px] sm:text-xs text-muted-foreground/80">
-                        Comisión (0.5%) {orderType === "sell" ? "-" : "+"}
-                      </span>
-                      <span className="text-[10px] sm:text-xs text-muted-foreground/80">
-                        {formatCurrency(calculateTotal().commission)}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Total */}
+                <div className="space-y-1">
                   <div className="flex justify-between items-center">
-                    <span className="text-xs sm:text-sm text-muted-foreground">
-                      Total estimado {orderType === "sell" ? "(recibirás)" : "(pagarás)"}
-                    </span>
+                    <span className="text-xs sm:text-sm text-muted-foreground">Total estimado</span>
                     <span className="text-foreground font-bold text-sm sm:text-base md:text-lg">
-                      {formatCurrency(calculateTotal().total)}
+                      {formatCurrency(calculateTotal())}
                     </span>
                   </div>
-
-                  {!isOrderValid() && calculateTotal().total > 0 && (
-                    <p className="text-[10px] sm:text-xs text-red-400">
-                      *{" "}
-                      {orderType === "buy" ? "El monto excede tu saldo disponible" : "No tienes suficientes nominales"}
-                    </p>
+                  {!isOrderValid() && calculateTotal() > 0 && (
+                    <p className="text-[10px] sm:text-xs text-red-400">* El monto excede tu saldo disponible</p>
                   )}
                   <p className="text-[10px] sm:text-xs text-muted-foreground">
                     * Este es un valor aproximado. El precio final puede variar según las condiciones del mercado.
@@ -1090,71 +937,13 @@ export default function StockDetailPage() {
                 orderType === "buy" ? "bg-green-700 hover:bg-green-800" : "bg-red-700 hover:bg-red-800"
               }`}
               disabled={!isOrderValid()}
-              onClick={handleOrderSubmit}
+              onClick={() => {
+                // Handle order submission
+                setIsOrderModalOpen(false)
+              }}
             >
               Confirmar {orderType === "buy" ? "Compra" : "Venta"}
             </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Order Status Modal */}
-      <Dialog open={isOrderStatusModalOpen} onOpenChange={setIsOrderStatusModalOpen}>
-        <DialogContent className="bg-card border-white/20 max-w-[95vw] sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="text-foreground text-lg sm:text-xl md:text-2xl text-center">
-              {orderStatus === "loading" && "Procesando Orden"}
-              {orderStatus === "success" && "Orden Exitosa"}
-              {orderStatus === "error" && "Error en la Orden"}
-            </DialogTitle>
-          </DialogHeader>
-
-          <div className="py-6 sm:py-8">
-            {orderStatus === "loading" && (
-              <div className="flex flex-col items-center justify-center space-y-4">
-                <Loader2 className="h-16 w-16 sm:h-20 sm:w-20 text-primary animate-spin" />
-                <p className="text-sm sm:text-base text-muted-foreground text-center">Estamos procesando tu orden...</p>
-                <p className="text-xs sm:text-sm text-muted-foreground text-center">Por favor espera un momento</p>
-              </div>
-            )}
-
-            {orderStatus === "success" && (
-              <div className="flex flex-col items-center justify-center space-y-4">
-                <div className="rounded-full bg-green-700/20 p-4">
-                  <CheckCircle2 className="h-16 w-16 sm:h-20 sm:w-20 text-green-700" />
-                </div>
-                <p className="text-base sm:text-lg font-semibold text-foreground text-center">
-                  ¡Orden creada exitosamente!
-                </p>
-                <p className="text-xs sm:text-sm text-muted-foreground text-center max-w-sm">
-                  Tu orden de {orderType === "buy" ? "compra" : "venta"} de {stock.symbol} ha sido procesada
-                  correctamente.
-                </p>
-                <Button
-                  onClick={handleCloseStatusModal}
-                  className="w-full mt-4 bg-green-700 hover:bg-green-800 text-white"
-                >
-                  Aceptar
-                </Button>
-              </div>
-            )}
-
-            {orderStatus === "error" && (
-              <div className="flex flex-col items-center justify-center space-y-4">
-                <div className="rounded-full bg-red-700/20 p-4">
-                  <XCircle className="h-16 w-16 sm:h-20 sm:w-20 text-red-700" />
-                </div>
-                <p className="text-base sm:text-lg font-semibold text-foreground text-center">
-                  Error al procesar la orden
-                </p>
-                <p className="text-xs sm:text-sm text-muted-foreground text-center max-w-sm">
-                  {orderErrorMessage || "Hubo un problema al procesar tu orden. Por favor, intenta nuevamente."}
-                </p>
-                <Button onClick={handleCloseStatusModal} className="w-full mt-4 bg-red-700 hover:bg-red-800 text-white">
-                  Cerrar
-                </Button>
-              </div>
-            )}
           </div>
         </DialogContent>
       </Dialog>

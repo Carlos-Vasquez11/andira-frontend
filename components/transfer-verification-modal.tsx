@@ -13,7 +13,6 @@ import { AlertCircle } from "lucide-react"
 interface TransferVerificationModalProps {
   isOpen: boolean
   onClose: () => void
-  currency: "Bolívares" | "USDT"
 }
 
 const VENEZUELAN_BANKS = [
@@ -41,14 +40,12 @@ const VENEZUELAN_BANKS = [
   "Otros",
 ]
 
-export function TransferVerificationModal({ isOpen, onClose, currency }: TransferVerificationModalProps) {
+export function TransferVerificationModal({ isOpen, onClose }: TransferVerificationModalProps) {
   const [formData, setFormData] = useState({
     transferNumber: "",
     transferDate: "",
     amount: "",
     bankOrigin: "",
-    txHash: "",
-    walletAddress: "",
     additionalNotes: "",
   })
 
@@ -62,7 +59,7 @@ export function TransferVerificationModal({ isOpen, onClose, currency }: Transfe
     // Simulate API call to backend
     await new Promise((resolve) => setTimeout(resolve, 1500))
 
-    console.log("[v0] Transfer verification submitted:", { ...formData, currency })
+    console.log("[v0] Transfer verification submitted:", formData)
 
     setIsSubmitting(false)
     setSubmitSuccess(true)
@@ -75,8 +72,6 @@ export function TransferVerificationModal({ isOpen, onClose, currency }: Transfe
         transferDate: "",
         amount: "",
         bankOrigin: "",
-        txHash: "",
-        walletAddress: "",
         additionalNotes: "",
       })
       onClose()
@@ -91,9 +86,7 @@ export function TransferVerificationModal({ isOpen, onClose, currency }: Transfe
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl">
-            Verificar Transferencia - {currency === "Bolívares" ? "Bolívares" : "USDT"}
-          </DialogTitle>
+          <DialogTitle className="text-2xl">Verificar Transferencia</DialogTitle>
         </DialogHeader>
 
         {submitSuccess ? (
@@ -116,144 +109,79 @@ export function TransferVerificationModal({ isOpen, onClose, currency }: Transfe
               <div className="flex items-start space-x-2">
                 <AlertCircle className="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" />
                 <p className="text-sm text-foreground">
-                  {currency === "Bolívares"
-                    ? "Por favor, proporciona los detalles de tu transferencia bancaria para que podamos verificarla y acreditar los fondos a tu cuenta."
-                    : "Por favor, proporciona los detalles de tu transacción de USDT para que podamos verificarla y acreditar los fondos a tu cuenta."}
+                  Por favor, proporciona los detalles de tu transferencia para que podamos verificarla y acreditar los
+                  fondos a tu cuenta.
                 </p>
               </div>
             </div>
 
-            {currency === "Bolívares" ? (
-              // Bolivares Form Fields
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="transferNumber">Número de Transferencia *</Label>
-                  <Input
-                    id="transferNumber"
-                    placeholder="Ingrese el número de transferencia"
-                    value={formData.transferNumber}
-                    onChange={(e) => handleChange("transferNumber", e.target.value)}
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="transferDate">Fecha de Transferencia *</Label>
-                  <Input
-                    id="transferDate"
-                    type="date"
-                    value={formData.transferDate}
-                    onChange={(e) => handleChange("transferDate", e.target.value)}
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="amount">Monto Transferido (Bolívares) *</Label>
-                  <Input
-                    id="amount"
-                    type="number"
-                    step="0.01"
-                    placeholder="0.00"
-                    value={formData.amount}
-                    onChange={(e) => handleChange("amount", e.target.value)}
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="bankOrigin">Banco de Origen *</Label>
-                  <select
-                    id="bankOrigin"
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    value={formData.bankOrigin}
-                    onChange={(e) => handleChange("bankOrigin", e.target.value)}
-                    required
-                  >
-                    <option value="">Seleccione un banco</option>
-                    {VENEZUELAN_BANKS.map((bank) => (
-                      <option key={bank} value={bank}>
-                        {bank}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="additionalNotes">Notas Adicionales (Opcional)</Label>
-                  <Textarea
-                    id="additionalNotes"
-                    placeholder="Cualquier información adicional que pueda ayudarnos a verificar tu transferencia..."
-                    rows={4}
-                    value={formData.additionalNotes}
-                    onChange={(e) => handleChange("additionalNotes", e.target.value)}
-                  />
-                </div>
+            {/* Form Fields */}
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="transferNumber">Número de Transferencia *</Label>
+                <Input
+                  id="transferNumber"
+                  placeholder="Ingrese el número de transferencia"
+                  value={formData.transferNumber}
+                  onChange={(e) => handleChange("transferNumber", e.target.value)}
+                  required
+                />
               </div>
-            ) : (
-              // USDT Form Fields
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="txHash">Hash de Transacción (TxHash) *</Label>
-                  <Input
-                    id="txHash"
-                    placeholder="Ingrese el hash de la transacción"
-                    value={formData.txHash}
-                    onChange={(e) => handleChange("txHash", e.target.value)}
-                    required
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Puedes encontrar el hash en tu wallet o en el explorador de blockchain
-                  </p>
-                </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="walletAddress">Dirección de Wallet de Origen *</Label>
-                  <Input
-                    id="walletAddress"
-                    placeholder="Ingrese la dirección desde donde enviaste los USDT"
-                    value={formData.walletAddress}
-                    onChange={(e) => handleChange("walletAddress", e.target.value)}
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="transferDate">Fecha de Transacción *</Label>
-                  <Input
-                    id="transferDate"
-                    type="date"
-                    value={formData.transferDate}
-                    onChange={(e) => handleChange("transferDate", e.target.value)}
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="amount">Monto Enviado (USDT) *</Label>
-                  <Input
-                    id="amount"
-                    type="number"
-                    step="0.01"
-                    placeholder="0.00"
-                    value={formData.amount}
-                    onChange={(e) => handleChange("amount", e.target.value)}
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="additionalNotes">Notas Adicionales (Opcional)</Label>
-                  <Textarea
-                    id="additionalNotes"
-                    placeholder="Cualquier información adicional que pueda ayudarnos a verificar tu transacción..."
-                    rows={4}
-                    value={formData.additionalNotes}
-                    onChange={(e) => handleChange("additionalNotes", e.target.value)}
-                  />
-                </div>
+              <div className="space-y-2">
+                <Label htmlFor="transferDate">Fecha de Transferencia *</Label>
+                <Input
+                  id="transferDate"
+                  type="date"
+                  value={formData.transferDate}
+                  onChange={(e) => handleChange("transferDate", e.target.value)}
+                  required
+                />
               </div>
-            )}
+
+              <div className="space-y-2">
+                <Label htmlFor="amount">Monto Transferido (Bolívares) *</Label>
+                <Input
+                  id="amount"
+                  type="number"
+                  step="0.01"
+                  placeholder="0.00"
+                  value={formData.amount}
+                  onChange={(e) => handleChange("amount", e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="bankOrigin">Banco de Origen *</Label>
+                <select
+                  id="bankOrigin"
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  value={formData.bankOrigin}
+                  onChange={(e) => handleChange("bankOrigin", e.target.value)}
+                  required
+                >
+                  <option value="">Seleccione un banco</option>
+                  {VENEZUELAN_BANKS.map((bank) => (
+                    <option key={bank} value={bank}>
+                      {bank}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Additional Notes */}
+              <div className="space-y-2">
+                <Label htmlFor="additionalNotes">Notas Adicionales (Opcional)</Label>
+                <Textarea
+                  id="additionalNotes"
+                  placeholder="Cualquier información adicional que pueda ayudarnos a verificar tu transferencia..."
+                  rows={4}
+                  value={formData.additionalNotes}
+                  onChange={(e) => handleChange("additionalNotes", e.target.value)}
+                />
+              </div>
+            </div>
 
             {/* Submit Button */}
             <div className="flex justify-end space-x-3">

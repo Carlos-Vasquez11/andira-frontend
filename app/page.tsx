@@ -1,14 +1,15 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { SharedHeader } from "@/components/shared-header"
 import { SharedFooter } from "@/components/shared-footer"
-import { config } from "@/lib/config"
-import { TrendingUp, BarChart3, ArrowRight, User } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 import { CompaniesCarousel } from "@/components/companies-carousel"
 import { motion } from "framer-motion"
 import Image from "next/image"
+import { HowItWorks } from "@/components/how-it-works" // Import the new component
+import { PlatformFeatures } from "@/components/platform-features" // Import the new component
+import { CallToAction } from "@/components/call-to-action" // Import the new component
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -187,128 +188,14 @@ export default function HomePage() {
       </section>
 
       {/* How It Works Section */}
-      <section className="py-16 px-4 bg-card/30">
-        <div className="container mx-auto">
-          <motion.div
-            className="max-w-3xl mx-auto text-center mb-12"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={fadeInUp}
-            transition={{ duration: 0.6 }}
-          >
-            <h3 className="text-3xl font-bold text-foreground mb-4">¿Cómo funciona?</h3>
-            <p className="text-lg text-foreground">Comenzar a invertir es más fácil de lo que piensas</p>
-          </motion.div>
-
-          <motion.div
-            className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={staggerContainer}
-          >
-            <motion.div className="text-center" variants={fadeInUp} transition={{ duration: 0.5 }}>
-              <motion.div
-                className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4"
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <User className="h-8 w-8 text-white" />
-              </motion.div>
-              <h4 className="text-xl font-semibold text-foreground mb-2">1. Abre tu cuenta</h4>
-              <p className="text-foreground">
-                Regístrate en minutos con tu documento de identidad y completa la verificación
-              </p>
-            </motion.div>
-
-            <motion.div className="text-center" variants={fadeInUp} transition={{ duration: 0.5 }}>
-              <motion.div
-                className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4"
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <TrendingUp className="h-8 w-8 text-white" />
-              </motion.div>
-              <h4 className="text-xl font-semibold text-foreground mb-2">2. Empieza a invertir</h4>
-              <p className="text-foreground">Deposita fondos y selecciona las empresas en las que quieres invertir</p>
-            </motion.div>
-
-            <motion.div className="text-center" variants={fadeInUp} transition={{ duration: 0.5 }}>
-              <motion.div
-                className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mx-auto mb-4"
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <BarChart3 className="h-8 w-8 text-white" />
-              </motion.div>
-              <h4 className="text-xl font-semibold text-foreground mb-2">3. Monitorea tus inversiones</h4>
-              <p className="text-foreground">
-                Sigue el rendimiento de tu portafolio en tiempo real desde cualquier dispositivo
-              </p>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
+      <HowItWorks />
 
       {/* Services Section */}
-      <section id="services" className="py-16 px-4 bg-card/30">
-        <div className="container mx-auto">
-          <motion.div
-            className="max-w-3xl mx-auto text-center mb-12"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={fadeInUp}
-            transition={{ duration: 0.6 }}
-          >
-            <h3 className="text-3xl font-bold text-foreground mb-4">Nuestra Plataforma</h3>
-            <p className="text-lg text-foreground">
-              Ofrecemos una plataforma completa para tus inversiones en el mercado venezolano
-            </p>
-          </motion.div>
-
-          <motion.div
-            className="grid md:grid-cols-2 gap-8"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={staggerContainer}
-          >
-            <motion.div variants={scaleIn} transition={{ duration: 0.5 }} whileHover={{ y: -5 }}>
-              <Card className="border-border bg-card h-full transition-shadow hover:shadow-lg">
-                <CardHeader>
-                  <BarChart3 className="h-8 w-8 text-accent mb-2" />
-                  <CardTitle>Trading en Tiempo Real</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-foreground">
-                    Ejecuta órdenes de compra y venta instantáneamente con nuestra plataforma avanzada
-                  </p>
-                </CardContent>
-              </Card>
-            </motion.div>
-
-            <motion.div variants={scaleIn} transition={{ duration: 0.5 }} whileHover={{ y: -5 }}>
-              <Card className="border-border bg-card h-full transition-shadow hover:shadow-lg">
-                <CardHeader>
-                  <TrendingUp className="h-8 w-8 text-accent mb-2" />
-                  <CardTitle>Análisis de Mercado</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-foreground">
-                    Accede a reportes detallados y análisis técnico de las empresas en bolsa de valores de caracas
-                  </p>
-                </CardContent>
-              </Card>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
+      <PlatformFeatures />
 
       {/* Companies Section */}
-      <section id="companies" className="py-16 px-4">
-        <div className="container mx-auto">
+      <section id="companies" className="py-16">
+        <div className="container mx-auto px-4">
           <motion.div
             className="max-w-3xl mx-auto text-center mb-12"
             initial="hidden"
@@ -320,48 +207,22 @@ export default function HomePage() {
             <h3 className="text-3xl font-bold text-foreground mb-4">Empresas Destacadas</h3>
             <p className="text-lg text-foreground">Invierte en las compañías líderes del mercado venezolano</p>
           </motion.div>
-
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={fadeIn}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            <CompaniesCarousel />
-          </motion.div>
         </div>
+
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={fadeIn}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="w-full"
+        >
+          <CompaniesCarousel />
+        </motion.div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-card/30">
-        <div className="container mx-auto text-center">
-          <motion.div
-            className="max-w-2xl mx-auto"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={staggerContainer}
-          >
-            <motion.h3
-              className="text-4xl font-bold text-foreground mb-6"
-              variants={fadeInUp}
-              transition={{ duration: 0.6 }}
-            >
-              Comienza a invertir hoy
-            </motion.h3>
-            <motion.p className="text-xl text-foreground mb-8" variants={fadeInUp} transition={{ duration: 0.6 }}>
-              Únete a miles de inversionistas que confían en {config.app.name} y haz crecer tus ahorros
-            </motion.p>
-            <motion.div variants={scaleIn} transition={{ duration: 0.5 }}>
-              <Button size="lg" className="bg-accent text-white hover:bg-accent/90 transition-all hover:scale-105">
-                Crear Cuenta Gratuita
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
+      <CallToAction />
 
       <SharedFooter />
     </div>

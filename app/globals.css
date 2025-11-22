@@ -53,6 +53,11 @@
 
   --radius: 0.625rem;
 
+  /* Adding neon accent colors for the new platform section */
+  --neon-blue: oklch(0.6 0.2 250);
+  --neon-purple: oklch(0.6 0.25 300);
+  --neon-cyan: oklch(0.75 0.15 200);
+
   /* Sidebar colors */
   --sidebar: oklch(0.15 0.04 240);
   --sidebar-foreground: oklch(1 0 0);
@@ -93,6 +98,10 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+  /* Exposing neon colors to Tailwind */
+  --color-neon-blue: var(--neon-blue);
+  --color-neon-purple: var(--neon-purple);
+  --color-neon-cyan: var(--neon-cyan);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);

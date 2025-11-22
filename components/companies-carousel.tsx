@@ -51,10 +51,10 @@ export function CompaniesCarousel() {
     }
   }, [])
 
-  const duplicatedCompanies = [...companies, ...companies]
+  const duplicatedCompanies = [...companies, ...companies, ...companies, ...companies]
 
   return (
-    <div className="relative overflow-hidden">
+    <div className="relative overflow-hidden w-full">
       <div ref={scrollRef} className="flex gap-4 overflow-x-hidden" style={{ scrollBehavior: "auto" }}>
         {duplicatedCompanies.map((company, index) => (
           <Card

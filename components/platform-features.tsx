@@ -40,12 +40,37 @@ export function PlatformFeatures() {
             transition={{ duration: 0.8 }}
           >
             <div className="order-2 lg:order-1 relative group">
-              <div className="absolute -inset-1 bg-gradient-to-r from-neon-blue to-neon-cyan rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
+              {/* Added animated pulsing gradient background */}
+              <motion.div
+                className="absolute -inset-1 bg-gradient-to-r from-neon-blue to-neon-cyan rounded-2xl blur opacity-20"
+                animate={{
+                  opacity: [0.2, 0.4, 0.2],
+                  scale: [1, 1.02, 1],
+                }}
+                transition={{
+                  duration: 4,
+                  repeat: Number.POSITIVE_INFINITY,
+                  ease: "easeInOut",
+                }}
+              />
               <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-card/50 flex items-center justify-center">
                 <div className="absolute inset-0 bg-gradient-to-br from-neon-blue/5 to-transparent" />
-                <div className="relative z-10 p-8 rounded-full bg-background/30 backdrop-blur-md border border-white/10 shadow-xl group-hover:scale-110 transition-transform duration-500">
+
+                {/* Added floating animation to the center icon container */}
+                <motion.div
+                  className="relative z-10 p-8 rounded-full bg-background/30 backdrop-blur-md border border-white/10 shadow-xl"
+                  animate={{
+                    y: [-10, 10, -10],
+                    rotate: [0, 5, -5, 0],
+                  }}
+                  transition={{
+                    duration: 6,
+                    repeat: Number.POSITIVE_INFINITY,
+                    ease: "easeInOut",
+                  }}
+                >
                   <ArrowUpDown className="w-16 h-16 text-neon-blue" />
-                </div>
+                </motion.div>
                 {/* Decorative Grid */}
                 <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_at_center,black_50%,transparent_100%)]" />
               </div>
@@ -89,7 +114,7 @@ export function PlatformFeatures() {
                 tus estrategias con herramientas profesionales al alcance de tu mano.
               </p>
               <ul className="space-y-3 mt-4">
-                {["Gráficos avanzados", "Reportes financieros", "Indicadores técnicos"].map((item, i) => (
+                {["Gráficos avanzados", "Reportes financieros"].map((item, i) => (
                   <li key={i} className="flex items-center text-muted-foreground">
                     <div className="w-1.5 h-1.5 rounded-full bg-neon-purple mr-3" />
                     {item}
@@ -99,12 +124,38 @@ export function PlatformFeatures() {
             </div>
 
             <div className="relative group">
-              <div className="absolute -inset-1 bg-gradient-to-r from-neon-purple to-pink-500 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-500"></div>
+              {/* Added animated pulsing gradient background with different phase */}
+              <motion.div
+                className="absolute -inset-1 bg-gradient-to-r from-neon-purple to-pink-500 rounded-2xl blur opacity-20"
+                animate={{
+                  opacity: [0.2, 0.5, 0.2],
+                  scale: [1, 1.03, 1],
+                }}
+                transition={{
+                  duration: 5,
+                  repeat: Number.POSITIVE_INFINITY,
+                  ease: "easeInOut",
+                  delay: 1,
+                }}
+              />
               <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl border border-white/10 bg-card/50 flex items-center justify-center">
                 <div className="absolute inset-0 bg-gradient-to-br from-neon-purple/5 to-transparent" />
-                <div className="relative z-10 p-8 rounded-full bg-background/30 backdrop-blur-md border border-white/10 shadow-xl group-hover:scale-110 transition-transform duration-500">
+
+                {/* Added floating animation to the center icon container with different timing */}
+                <motion.div
+                  className="relative z-10 p-8 rounded-full bg-background/30 backdrop-blur-md border border-white/10 shadow-xl"
+                  animate={{
+                    y: [10, -10, 10],
+                    scale: [1, 1.05, 1],
+                  }}
+                  transition={{
+                    duration: 7,
+                    repeat: Number.POSITIVE_INFINITY,
+                    ease: "easeInOut",
+                  }}
+                >
                   <TrendingUp className="w-16 h-16 text-neon-purple" />
-                </div>
+                </motion.div>
                 {/* Decorative Graph Line */}
                 <svg
                   className="absolute inset-0 w-full h-full opacity-20"

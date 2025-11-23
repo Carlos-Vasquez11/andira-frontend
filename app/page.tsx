@@ -7,6 +7,7 @@ import { ArrowRight } from "lucide-react"
 import { CompaniesCarousel } from "@/components/companies-carousel"
 import { motion } from "framer-motion"
 import Image from "next/image"
+import Link from "next/link" // Added Link import
 import { HowItWorks } from "@/components/how-it-works" // Import the new component
 import { PlatformFeatures } from "@/components/platform-features" // Import the new component
 import { CallToAction } from "@/components/call-to-action" // Import the new component
@@ -77,10 +78,12 @@ export default function HomePage() {
               variants={fadeInUp}
               transition={{ duration: 0.6, delay: 0.5 }}
             >
-              <Button size="lg" className="bg-accent text-white hover:bg-accent/90 transition-all hover:scale-105">
-                Abrir Cuenta
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
+              <Link href="/auth">
+                <Button size="lg" className="bg-accent text-white hover:bg-accent/90 transition-all hover:scale-105">
+                  Abrir Cuenta
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
             </motion.div>
           </div>
         </div>

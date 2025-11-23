@@ -13,6 +13,7 @@ const steps = [
     icon: User,
     visualIcon: ShieldCheck,
     visualGradient: "from-blue-500 to-cyan-400",
+    visualGradientSecondary: "from-cyan-400 to-blue-600",
   },
   {
     id: 2,
@@ -22,6 +23,7 @@ const steps = [
     icon: TrendingUp,
     visualIcon: Wallet,
     visualGradient: "from-emerald-500 to-teal-400",
+    visualGradientSecondary: "from-teal-400 to-emerald-600",
   },
   {
     id: 3,
@@ -31,6 +33,7 @@ const steps = [
     icon: BarChart3,
     visualIcon: PieChart,
     visualGradient: "from-purple-500 to-pink-400",
+    visualGradientSecondary: "from-pink-400 to-purple-600",
   },
 ]
 
@@ -85,24 +88,86 @@ export function HowItWorks() {
 
                 {/* Image Card */}
                 <div className={cn("w-full md:w-1/2 pl-20 md:pl-12", index % 2 === 1 ? "md:pl-0 md:pr-12" : "")}>
-                  <div className="relative group rounded-2xl overflow-hidden border border-border/50 shadow-2xl bg-card/50 aspect-video flex items-center justify-center">
-                    <div
-                      className={cn(
-                        "absolute inset-0 bg-gradient-to-br opacity-10 group-hover:opacity-20 transition-opacity duration-500",
-                        step.visualGradient,
-                      )}
+                  <motion.div
+                    className="relative group rounded-2xl overflow-hidden border border-border/50 shadow-2xl bg-card/50 aspect-video flex items-center justify-center"
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {/* Animated Gradient Background */}
+                    <motion.div
+                      className={cn("absolute inset-0 bg-gradient-to-br opacity-20 blur-xl", step.visualGradient)}
+                      animate={{
+                        scale: [1, 1.2, 1],
+                        opacity: [0.2, 0.3, 0.2],
+                      }}
+                      transition={{
+                        duration: 4,
+                        repeat: Number.POSITIVE_INFINITY,
+                        ease: "easeInOut",
+                      }}
                     />
 
-                    <div className="relative z-10 flex items-center justify-center w-24 h-24 rounded-2xl bg-background/10 backdrop-blur-sm border border-white/10 shadow-inner group-hover:scale-110 transition-transform duration-500">
-                      <step.visualIcon className="w-12 h-12 text-foreground/80" />
-                    </div>
+                    {/* Floating Icon Container with Gradient Border */}
+                    <motion.div
+                      className="relative z-10 flex items-center justify-center w-24 h-24 rounded-2xl bg-background/10 backdrop-blur-md border border-white/10 shadow-[0_0_30px_rgba(0,0,0,0.2)]"
+                      animate={{
+                        y: [0, -10, 0],
+                        rotate: [0, 5, -5, 0],
+                      }}
+                      transition={{
+                        duration: 6,
+                        repeat: Number.POSITIVE_INFINITY,
+                        ease: "easeInOut",
+                      }}
+                    >
+                      {/* Inner Gradient Glow */}
+                      <div
+                        className={cn(
+                          "absolute inset-0 rounded-2xl opacity-30 blur-md",
+                          "bg-gradient-to-r",
+                          step.visualGradient,
+                        )}
+                      />
+                      <step.visualIcon className="w-12 h-12 text-white relative z-10 drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]" />
+                    </motion.div>
 
                     {/* Decorative background elements */}
                     <div className="absolute inset-0 pointer-events-none">
-                      <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-white/5 rounded-full blur-3xl" />
-                      <div className="absolute bottom-1/4 right-1/4 w-40 h-40 bg-accent/5 rounded-full blur-3xl" />
+                      <motion.div
+                        className={cn(
+                          "absolute top-[-20%] left-[-20%] w-1/2 h-1/2 rounded-full blur-[60px] opacity-40",
+                          "bg-gradient-to-br",
+                          step.visualGradient,
+                        )}
+                        animate={{
+                          x: [0, 30, 0],
+                          y: [0, 20, 0],
+                        }}
+                        transition={{
+                          duration: 8,
+                          repeat: Number.POSITIVE_INFINITY,
+                          ease: "easeInOut",
+                        }}
+                      />
+                      <motion.div
+                        className={cn(
+                          "absolute bottom-[-20%] right-[-20%] w-1/2 h-1/2 rounded-full blur-[60px] opacity-40",
+                          "bg-gradient-to-tl",
+                          step.visualGradientSecondary,
+                        )}
+                        animate={{
+                          x: [0, -30, 0],
+                          y: [0, -20, 0],
+                        }}
+                        transition={{
+                          duration: 8,
+                          repeat: Number.POSITIVE_INFINITY,
+                          ease: "easeInOut",
+                          delay: 1,
+                        }}
+                      />
                     </div>
-                  </div>
+                  </motion.div>
                 </div>
               </motion.div>
             ))}

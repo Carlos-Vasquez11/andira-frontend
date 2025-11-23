@@ -130,4 +130,23 @@
   .bg-gradient-radial {
     background-image: radial-gradient(var(--tw-gradient-stops));
   }
+
+  /* Adding keyframes for infinite scrolling marquee */
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .animate-marquee {
+    animation: marquee 30s linear infinite;
+    width: fit-content;
+  }
+  /* Pause animation on hover if desired, though user said no interaction needed */
+  /* .animate-marquee:hover {
+    animation-play-state: paused;
+  } */
 }

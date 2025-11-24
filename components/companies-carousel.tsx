@@ -16,8 +16,7 @@ const companies = [
 ]
 
 export function CompaniesCarousel() {
-  // The animation translates -50%, so we need 2 full sets visible at least, using 3 for safety on wide screens
-  const allCompanies = [...companies, ...companies, ...companies]
+  const allCompanies = [...companies, ...companies]
 
   return (
     <div className="w-full overflow-hidden">
@@ -25,19 +24,27 @@ export function CompaniesCarousel() {
         {allCompanies.map((company, index) => (
           <div key={`${company.name}-${index}`} className="flex-shrink-0 px-4 w-[160px] sm:w-[200px] md:w-[240px]">
             <Card className="border-border bg-card hover:bg-accent/10 transition-colors h-full">
-              <CardContent className="p-4 flex flex-col items-center justify-center gap-3 h-32 sm:h-40">
+              <CardContent className="p-4 flex flex-col items-center justify-start gap-4 h-32 sm:h-40 pt-6">
                 <div className="relative w-20 sm:w-24 h-12 sm:h-16 flex items-center justify-center">
                   <Image
                     src={company.logo || "/placeholder.svg"}
                     alt={company.name}
                     fill
                     className="object-contain"
+                    style={{
+                      filter:
+                        "drop-shadow(0 0 4px rgba(255,255,255,1)) drop-shadow(0 0 8px rgba(255,255,255,0.9)) drop-shadow(0 0 16px rgba(255,255,255,0.7)) drop-shadow(0 0 24px rgba(255,255,255,0.5)) drop-shadow(0 0 40px rgba(255,255,255,0.3))",
+                    }}
                     sizes="(max-width: 640px) 80px, (max-width: 768px) 100px, 150px"
+                    loading="eager"
+                    priority={index < companies.length}
                   />
                 </div>
-                <p className="font-semibold text-foreground text-center text-xs sm:text-sm line-clamp-2">
-                  {company.name}
-                </p>
+                <div className="flex items-start justify-center min-h-[2.5rem]">
+                  <p className="font-semibold text-foreground text-center text-xs sm:text-sm line-clamp-2 leading-tight">
+                    {company.name}
+                  </p>
+                </div>
               </CardContent>
             </Card>
           </div>

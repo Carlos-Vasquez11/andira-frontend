@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { SharedHeader } from "@/components/shared-header"
 import { SharedFooter } from "@/components/shared-footer"
-import { ArrowRight } from "lucide-react"
+import { ArrowRight, Coins, DollarSign } from "lucide-react"
 import { CompaniesCarousel } from "@/components/companies-carousel"
 import { motion } from "framer-motion"
 import Image from "next/image"
@@ -90,8 +90,37 @@ export default function HomePage() {
       </motion.section>
 
       {/* Global Market Access Section */}
-      <section className="py-16 px-4 overflow-hidden">
-        <div className="container mx-auto">
+      <section className="py-16 px-4 overflow-hidden relative">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <motion.div
+            className="absolute top-1/4 -right-32 w-96 h-96 bg-gradient-to-br from-neon-blue/20 to-neon-cyan/20 rounded-full blur-[120px]"
+            animate={{
+              x: [0, 50, 0],
+              y: [0, 30, 0],
+              scale: [1, 1.2, 1],
+            }}
+            transition={{
+              duration: 15,
+              repeat: Number.POSITIVE_INFINITY,
+              ease: "easeInOut",
+            }}
+          />
+          <motion.div
+            className="absolute bottom-1/4 -left-32 w-96 h-96 bg-gradient-to-tr from-neon-purple/20 to-accent/20 rounded-full blur-[120px]"
+            animate={{
+              x: [0, -50, 0],
+              y: [0, -30, 0],
+              scale: [1, 1.3, 1],
+            }}
+            transition={{
+              duration: 18,
+              repeat: Number.POSITIVE_INFINITY,
+              ease: "easeInOut",
+            }}
+          />
+        </div>
+
+        <div className="container mx-auto relative z-10">
           <motion.div
             className="grid md:grid-cols-2 gap-8 md:gap-12 items-center max-w-6xl mx-auto"
             initial="hidden"
@@ -100,6 +129,23 @@ export default function HomePage() {
             variants={staggerContainer}
           >
             <motion.div variants={fadeInUp} transition={{ duration: 0.8, ease: "easeOut" }}>
+              <motion.div
+                className="flex flex-wrap gap-3 mb-6"
+                initial={{ opacity: 0, y: -20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+              >
+                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-emerald-500/20 to-emerald-600/10 border border-emerald-500/30 backdrop-blur-sm">
+                  <Coins className="w-4 h-4 text-emerald-400" />
+                  <span className="text-sm font-semibold text-emerald-300">Bolívares (Bs)</span>
+                </div>
+                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-cyan-500/20 to-cyan-600/10 border border-cyan-500/30 backdrop-blur-sm">
+                  <DollarSign className="w-4 h-4 text-cyan-400" />
+                  <span className="text-sm font-semibold text-cyan-300">USDT</span>
+                </div>
+              </motion.div>
+
               <motion.h3
                 className="text-3xl md:text-4xl font-bold text-foreground mb-6 text-balance"
                 initial={{ opacity: 0, x: -50 }}
@@ -109,6 +155,19 @@ export default function HomePage() {
               >
                 Accede a un mercado en crecimiento y haz rendir tus ahorros
               </motion.h3>
+
+              <motion.div
+                className="mb-6 p-4 rounded-xl bg-gradient-to-r from-accent/10 to-neon-blue/10 border border-accent/20"
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+              >
+                <p className="text-lg text-foreground font-semibold text-pretty">
+                  💰 Invierte con <span className="text-emerald-400">Bolívares</span> o{" "}
+                  <span className="text-cyan-400">USDT</span> y diversifica tu portafolio con flexibilidad total
+                </p>
+              </motion.div>
 
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -177,10 +236,11 @@ export default function HomePage() {
                 className="relative w-full h-full"
               >
                 <Image
-                  src="/glowing-blue-digital-globe-with-network-connection.jpg"
-                  alt="Mundo interconectado representando el mercado global"
+                  src="/world-to-venezuela-globe.png"
+                  alt="Mundo interconectado con Venezuela destacada representando el acceso global al mercado venezolano"
                   fill
                   className="object-contain drop-shadow-2xl"
+                  style={{ mixBlendMode: "lighten" }}
                   sizes="(max-width: 768px) 100vw, 50vw"
                   priority
                 />

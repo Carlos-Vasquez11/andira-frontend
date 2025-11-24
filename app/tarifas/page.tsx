@@ -4,38 +4,10 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { SharedHeader } from "@/components/shared-header"
 import { SharedFooter } from "@/components/shared-footer"
-import { Building2, User, ArrowLeft, DollarSign } from "lucide-react"
+import { Building2, User, ArrowLeft, Check } from "lucide-react"
 import Link from "next/link"
-import { useEffect, useState } from "react"
-
-interface ExchangeRate {
-  rate: number
-  date: string
-}
 
 export default function TarifasPage() {
-  const [usdRate, setUsdRate] = useState<ExchangeRate | null>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const fetchUSDRate = async () => {
-      try {
-        const response = await fetch("https://bcv-api.rafnixg.dev/v1/exchange/usd")
-        const data = await response.json()
-        setUsdRate({
-          rate: data.rate,
-          date: data.date,
-        })
-      } catch (error) {
-        console.error("Error fetching USD rate:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchUSDRate()
-  }, [])
-
   return (
     <div className="min-h-screen bg-background">
       <SharedHeader />
@@ -48,121 +20,122 @@ export default function TarifasPage() {
         </Link>
       </div>
 
-      {/* USD Exchange Rate */}
-      <section className="py-8 px-4 bg-card/30">
-        <div className="container mx-auto">
-          <div className="max-w-2xl mx-auto text-center">
-            <Card className="border-border/40 bg-card/50">
-              <CardHeader>
-                <DollarSign className="h-8 w-8 text-accent mb-2 mx-auto" />
-                <CardTitle>Tasa de Cambio Oficial USD</CardTitle>
-                <CardDescription>Banco Central de Venezuela</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {loading ? (
-                  <p className="text-foreground/60">Cargando tasa oficial...</p>
-                ) : usdRate ? (
-                  <div className="text-center">
-                    <p className="text-3xl font-bold text-accent mb-2">{usdRate.rate.toLocaleString("es-VE")} VEF</p>
-                    <p className="text-sm text-foreground/60">
-                      Actualizado: {new Date(usdRate.date).toLocaleDateString("es-VE")}
-                    </p>
-                  </div>
-                ) : (
-                  <p className="text-foreground/60">No se pudo cargar la tasa oficial</p>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
       {/* Pricing Section */}
-      <section className="py-16 px-4">
-        <div className="container mx-auto">
-          <div className="max-w-3xl mx-auto text-center mb-12">
-            <h2 className="text-4xl font-bold text-foreground mb-4">Tarifas</h2>
-            <p className="text-lg text-foreground/80 mb-6">
-              Comisiones competitivas para personas naturales y jurídicas
-            </p>
-            <div className="bg-accent/10 border border-accent/20 rounded-lg p-4 mb-8">
-              <p className="text-sm text-foreground/80">
-                <strong>Importante:</strong> Los precios se muestran en USD para referencia, pero todos los pagos se
-                realizan en VEF (Bolívares) según la tasa oficial del Banco Central de Venezuela.
-              </p>
-            </div>
+      <section className="py-20 px-4 relative overflow-hidden">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-20 left-1/4 w-96 h-96 bg-neon-blue/10 rounded-full blur-[120px]" />
+          <div className="absolute bottom-20 right-1/4 w-96 h-96 bg-neon-purple/10 rounded-full blur-[120px]" />
+        </div>
+
+        <div className="container mx-auto relative z-10">
+          <div className="max-w-3xl mx-auto text-center mb-16">
+            <h2 className="text-5xl md:text-6xl font-bold text-foreground mb-6 bg-gradient-to-r from-foreground via-neon-cyan to-neon-blue bg-clip-text text-transparent">
+              Tarifas
+            </h2>
+            <p className="text-xl text-foreground/70">Comisiones competitivas y transparentes para todos</p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <Card className="border-border/40 bg-card/50">
-              <CardHeader>
-                <User className="h-8 w-8 text-accent mb-2" />
-                <CardTitle>Personas Naturales</CardTitle>
-                <CardDescription>Tarifas para inversionistas individuales</CardDescription>
+          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            {/* Natural Person Card */}
+            <Card className="relative border-0 overflow-hidden group hover:scale-[1.02] transition-transform duration-300">
+              {/* Gradient background */}
+              <div className="absolute inset-0 bg-gradient-to-br from-neon-blue/20 via-card to-card" />
+              <div className="absolute inset-0 bg-gradient-to-t from-neon-cyan/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+              <CardHeader className="relative z-10 pb-8">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-neon-blue to-neon-cyan flex items-center justify-center mb-4">
+                  <User className="h-8 w-8 text-background" />
+                </div>
+                <CardTitle className="text-2xl">Personas Naturales</CardTitle>
+                <CardDescription className="text-base">Para inversionistas individuales</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-foreground/80">Comisión por compra/venta</span>
-                  <span className="font-semibold text-foreground">0.5%</span>
+
+              <CardContent className="relative z-10 space-y-5">
+                <div className="flex justify-between items-center py-3 border-b border-border/30">
+                  <span className="text-foreground/70">Comisión por compra</span>
+                  <span className="text-xl font-bold text-foreground">0.5%</span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-foreground/80">Custodia mensual</span>
-                  <span className="font-semibold text-foreground">$5 USD</span>
+                <div className="flex justify-between items-center py-3 border-b border-border/30">
+                  <span className="text-foreground/70">Comisión por venta</span>
+                  <span className="text-xl font-bold text-foreground">1.5%</span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-foreground/80">Apertura de cuenta</span>
-                  <span className="font-semibold text-accent">Gratis</span>
+                <div className="flex justify-between items-center py-3">
+                  <span className="text-foreground/70">Custodia mensual</span>
+                  <span className="text-xl font-bold text-neon-cyan flex items-center gap-2">
+                    <Check className="h-5 w-5" />0 VEF
+                  </span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-foreground/80">Monto mínimo</span>
-                  <span className="font-semibold text-accent">$0 USD</span>
+                <div className="flex justify-between items-center py-3">
+                  <span className="text-foreground/70">Apertura de cuenta</span>
+                  <span className="text-xl font-bold text-neon-cyan flex items-center gap-2">
+                    <Check className="h-5 w-5" />
+                    Gratis
+                  </span>
+                </div>
+                <div className="flex justify-between items-center py-3">
+                  <span className="text-foreground/70">Monto mínimo</span>
+                  <span className="text-xl font-bold text-neon-cyan flex items-center gap-2">
+                    <Check className="h-5 w-5" />0 VEF
+                  </span>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="border-border/40 bg-card/50">
-              <CardHeader>
-                <Building2 className="h-8 w-8 text-accent mb-2" />
-                <CardTitle>Personas Jurídicas</CardTitle>
-                <CardDescription>Tarifas para empresas e instituciones</CardDescription>
+            {/* Legal Person Card */}
+            <Card className="relative border-0 overflow-hidden group hover:scale-[1.02] transition-transform duration-300">
+              {/* Gradient background */}
+              <div className="absolute inset-0 bg-gradient-to-br from-neon-purple/20 via-card to-card" />
+              <div className="absolute inset-0 bg-gradient-to-t from-neon-blue/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+              <CardHeader className="relative z-10 pb-8">
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-neon-purple to-neon-blue flex items-center justify-center mb-4">
+                  <Building2 className="h-8 w-8 text-background" />
+                </div>
+                <CardTitle className="text-2xl">Personas Jurídicas</CardTitle>
+                <CardDescription className="text-base">Para empresas e instituciones</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-foreground/80">Comisión por compra/venta</span>
-                  <span className="font-semibold text-foreground">0.3%</span>
+
+              <CardContent className="relative z-10 space-y-5">
+                <div className="flex justify-between items-center py-3 border-b border-border/30">
+                  <span className="text-foreground/70">Comisión por compra</span>
+                  <span className="text-xl font-bold text-foreground">0.5%</span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-foreground/80">Custodia mensual</span>
-                  <span className="font-semibold text-foreground">$25 USD</span>
+                <div className="flex justify-between items-center py-3 border-b border-border/30">
+                  <span className="text-foreground/70">Comisión por venta</span>
+                  <span className="text-xl font-bold text-foreground">1.5%</span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-foreground/80">Apertura de cuenta</span>
-                  <span className="font-semibold text-foreground">$50 USD</span>
+                <div className="flex justify-between items-center py-3">
+                  <span className="text-foreground/70">Custodia mensual</span>
+                  <span className="text-xl font-bold text-neon-cyan flex items-center gap-2">
+                    <Check className="h-5 w-5" />0 VEF
+                  </span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-foreground/80">Monto mínimo</span>
-                  <span className="font-semibold text-accent">$0 USD</span>
+                <div className="flex justify-between items-center py-3">
+                  <span className="text-foreground/70">Apertura de cuenta</span>
+                  <span className="text-xl font-bold text-neon-cyan flex items-center gap-2">
+                    <Check className="h-5 w-5" />
+                    Gratis
+                  </span>
+                </div>
+                <div className="flex justify-between items-center py-3">
+                  <span className="text-foreground/70">Monto mínimo</span>
+                  <span className="text-xl font-bold text-neon-cyan flex items-center gap-2">
+                    <Check className="h-5 w-5" />0 VEF
+                  </span>
                 </div>
               </CardContent>
             </Card>
           </div>
 
-          <div className="text-center mt-12">
-            <div className="bg-card/50 border border-border/40 rounded-lg p-6 max-w-2xl mx-auto">
-              <h4 className="font-semibold text-foreground mb-4">Información Adicional</h4>
-              <ul className="text-sm text-foreground/80 space-y-2 text-left">
-                <li>• Todas las transacciones se procesan en VEF según la tasa oficial del BCV</li>
-                <li>• No hay comisiones ocultas ni cargos adicionales</li>
-                <li>• Tarifas sujetas a cambios previo aviso</li>
-                <li>• Consulta términos y condiciones completos</li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="text-center mt-8">
-            <Button size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90">
-              Abrir Cuenta Ahora
-            </Button>
+          <div className="text-center mt-16">
+            <Link href="/auth">
+              <Button
+                size="lg"
+                className="bg-gradient-to-r from-neon-blue to-neon-cyan text-background hover:opacity-90 transition-opacity text-lg px-8 py-6 rounded-xl font-semibold shadow-lg shadow-neon-blue/20"
+              >
+                Abrir Cuenta Ahora
+              </Button>
+            </Link>
           </div>
         </div>
       </section>

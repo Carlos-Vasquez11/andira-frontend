@@ -19,7 +19,7 @@ const steps = [
     id: 2,
     title: "Empieza a invertir",
     description:
-      "Deposita fondos en tu cuenta a través de transferencias bancarias y selecciona las empresas venezolanas con mayor potencial.",
+      "Deposita fondos en tu cuenta mediante transferencias bancarias en Bolívares o USDT, y selecciona las empresas venezolanas con mayor potencial de crecimiento.",
     icon: TrendingUp,
     visualIcon: Wallet,
     visualGradient: "from-emerald-500 to-teal-400",

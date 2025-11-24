@@ -131,19 +131,22 @@
     background-image: radial-gradient(var(--tw-gradient-stops));
   }
 
-  /* Adding keyframes for infinite scrolling marquee */
+  /* Optimized keyframes for GPU-accelerated infinite scrolling marquee */
   @keyframes marquee {
     0% {
-      transform: translateX(0);
+      transform: translate3d(0, 0, 0);
     }
     100% {
-      transform: translateX(-50%);
+      transform: translate3d(-50%, 0, 0);
     }
   }
 
   .animate-marquee {
     animation: marquee 30s linear infinite;
     width: fit-content;
+    /* Added performance optimizations */
+    will-change: transform;
+    contain: layout;
   }
   /* Pause animation on hover if desired, though user said no interaction needed */
   /* .animate-marquee:hover {

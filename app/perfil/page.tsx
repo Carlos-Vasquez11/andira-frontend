@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { User, MapPin, FileText, CreditCard, Wallet, Edit2, Check, X, Camera } from "lucide-react"
+import { User, MapPin, FileText, CreditCard, Wallet, Edit2, Check, X } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 
@@ -17,18 +17,20 @@ export default function PerfilPage() {
     firstName: "María",
     lastName: "González",
     email: "maria.gonzalez@email.com",
-    avatar: "/professional-woman-avatar.png",
+    avatar: "/generic-user-avatar.svg",
     country: "Venezuela",
     documentType: "V",
     documentNumber: "12345678",
     bankAccount: "0102-1234-56-7890123456",
     cryptoAddress: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+    cryptoNetwork: "TRC20 (Tron)",
   })
 
   const [isEditingBank, setIsEditingBank] = useState(false)
   const [isEditingCrypto, setIsEditingCrypto] = useState(false)
   const [bankAccount, setBankAccount] = useState(user.bankAccount)
   const [cryptoAddress, setCryptoAddress] = useState(user.cryptoAddress)
+  const [cryptoNetwork, setCryptoNetwork] = useState(user.cryptoNetwork)
 
   const handleSaveBank = () => {
     // TODO: Save to backend
@@ -47,6 +49,7 @@ export default function PerfilPage() {
 
   const handleCancelCrypto = () => {
     setCryptoAddress(user.cryptoAddress)
+    setCryptoNetwork(user.cryptoNetwork)
     setIsEditingCrypto(false)
   }
 
@@ -58,18 +61,13 @@ export default function PerfilPage() {
         {/* Profile Header */}
         <div className="mb-6 sm:mb-8">
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
-            <div className="relative group">
-              <Avatar className="h-20 w-20 sm:h-24 sm:w-24 border-2 border-accent">
-                <AvatarImage src={user.avatar || "/placeholder.svg"} alt={`${user.firstName} ${user.lastName}`} />
-                <AvatarFallback className="bg-accent text-white text-2xl">
-                  {user.firstName[0]}
-                  {user.lastName[0]}
-                </AvatarFallback>
-              </Avatar>
-              <button className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                <Camera className="h-6 w-6 text-white" />
-              </button>
-            </div>
+            <Avatar className="h-20 w-20 sm:h-24 sm:w-24 border-2 border-accent">
+              <AvatarImage src={user.avatar || "/placeholder.svg"} alt={`${user.firstName} ${user.lastName}`} />
+              <AvatarFallback className="bg-accent text-white text-2xl">
+                {user.firstName[0]}
+                {user.lastName[0]}
+              </AvatarFallback>
+            </Avatar>
             <div className="text-center sm:text-left flex-1">
               <h1 className="text-2xl sm:text-3xl font-bold text-white mb-1">
                 {user.firstName} {user.lastName}
@@ -218,21 +216,34 @@ export default function PerfilPage() {
                 )}
               </div>
               <CardDescription className="text-white/60 text-sm">
-                Dirección para transacciones en criptomonedas
+                Dirección USDT para transacciones crypto
               </CardDescription>
             </CardHeader>
             <CardContent>
               {isEditingCrypto ? (
                 <div className="space-y-4">
                   <div className="space-y-2">
+                    <Label htmlFor="cryptoNetwork" className="text-white/80 text-sm">
+                      Red Blockchain
+                    </Label>
+                    <Input
+                      id="cryptoNetwork"
+                      value={cryptoNetwork}
+                      onChange={(e) => setCryptoNetwork(e.target.value)}
+                      placeholder="TRC20 (Tron)"
+                      className="bg-white/5 border-white/20 text-white placeholder:text-white/40"
+                    />
+                    <p className="text-xs text-white/50">Ejemplo: TRC20 (Tron), ERC20 (Ethereum), BEP20 (BSC)</p>
+                  </div>
+                  <div className="space-y-2">
                     <Label htmlFor="cryptoAddress" className="text-white/80 text-sm">
-                      Dirección de Wallet
+                      Dirección de Wallet USDT
                     </Label>
                     <Input
                       id="cryptoAddress"
                       value={cryptoAddress}
                       onChange={(e) => setCryptoAddress(e.target.value)}
-                      placeholder="0x..."
+                      placeholder="Ingresa tu dirección de wallet"
                       className="bg-white/5 border-white/20 text-white placeholder:text-white/40 font-mono text-xs sm:text-sm"
                     />
                   </div>
@@ -252,8 +263,19 @@ export default function PerfilPage() {
                   </div>
                 </div>
               ) : (
-                <div className="px-3 py-3 bg-white/5 rounded-md border border-white/10 overflow-hidden">
-                  <p className="text-white font-mono text-xs sm:text-sm break-all">{cryptoAddress}</p>
+                <div className="space-y-3">
+                  <div className="space-y-1">
+                    <Label className="text-white/60 text-xs">Red</Label>
+                    <div className="px-3 py-2 bg-white/5 rounded-md border border-white/10">
+                      <p className="text-white text-sm">{cryptoNetwork}</p>
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-white/60 text-xs">Dirección</Label>
+                    <div className="px-3 py-3 bg-white/5 rounded-md border border-white/10 overflow-hidden">
+                      <p className="text-white font-mono text-xs sm:text-sm break-all">{cryptoAddress}</p>
+                    </div>
+                  </div>
                 </div>
               )}
             </CardContent>

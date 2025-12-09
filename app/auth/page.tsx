@@ -53,7 +53,7 @@ export default function AuthPage() {
         firstName: "María",
         lastName: "González",
         email: "demo@kairos.com",
-        avatar: "/professional-woman-avatar.png",
+        avatar: "/generic-user-avatar.svg",
       }
 
       try {

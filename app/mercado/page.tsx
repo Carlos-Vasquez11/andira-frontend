@@ -116,7 +116,7 @@ export default function MercadoPage() {
           firstName: "Usuario",
           lastName: "Prueba",
           email: "test@kairos.com",
-          avatar: "/professional-woman-avatar.png",
+          avatar: "/generic-user-avatar.svg",
         })
         setIsLoading(false)
         return

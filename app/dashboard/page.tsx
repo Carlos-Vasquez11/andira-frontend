@@ -196,7 +196,7 @@ export default function DashboardPage() {
           firstName: "Usuario",
           lastName: "Prueba",
           email: "test@kairos.com",
-          avatar: "/professional-woman-avatar.png",
+          avatar: "/generic-user-avatar.svg",
           balanceUSDT: 500.0,
           cashVEF: 350000.0,
         })

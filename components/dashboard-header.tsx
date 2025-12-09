@@ -11,7 +11,7 @@ import {
 import { config } from "@/lib/config"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { LogOut, User, Settings, Home, TrendingUp, Bell } from "lucide-react"
+import { LogOut, User, Home, TrendingUp, Bell } from "lucide-react"
 import Image from "next/image"
 
 interface DashboardHeaderProps {
@@ -96,12 +96,6 @@ export function DashboardHeader({ user }: DashboardHeaderProps) {
                   <DropdownMenuItem className="text-white hover:bg-white/10 focus:bg-white/10 cursor-pointer">
                     <User className="mr-2 h-4 w-4" />
                     <span>Perfil</span>
-                  </DropdownMenuItem>
-                </Link>
-                <Link href="/perfil">
-                  <DropdownMenuItem className="text-white hover:bg-white/10 focus:bg-white/10 cursor-pointer">
-                    <Settings className="mr-2 h-4 w-4" />
-                    <span>Configuración</span>
                   </DropdownMenuItem>
                 </Link>
                 <DropdownMenuSeparator className="bg-white/20" />

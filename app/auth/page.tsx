@@ -12,7 +12,6 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Eye, EyeOff, Mail, Lock, User } from "lucide-react"
 import { SharedHeader } from "@/components/shared-header"
 import { SharedFooter } from "@/components/shared-footer"
-import { config } from "@/lib/config"
 import { useRouter } from "next/navigation"
 
 export default function AuthPage() {
@@ -45,64 +44,37 @@ export default function AuthPage() {
     setError("")
     setSuccess("")
 
-    // Demo login - bypass API for testing
-    if (loginData.email === "demo@kairos.com" && loginData.password === "demo123") {
-      // Store demo user data in localStorage
-      const demoUser = {
-        id: "1",
-        firstName: "María",
-        lastName: "González",
-        email: "demo@kairos.com",
-        avatar: "/generic-user-avatar.svg",
-      }
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
 
-      try {
-        localStorage.setItem("kairos_user", JSON.stringify(demoUser))
-        localStorage.setItem("kairos_token", "demo_token_123")
+    try {
+      const response = await fetch(`${apiUrl}/user-login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: loginData.email,
+          password: loginData.password,
+        }),
+      })
 
-        // Verify data was stored
-        const storedUser = localStorage.getItem("kairos_user")
-        const storedToken = localStorage.getItem("kairos_token")
+      if (response.ok) {
+        const data = await response.json()
 
-        if (!storedUser || !storedToken) {
-          throw new Error("Failed to store authentication data")
-        }
+        localStorage.setItem("kairos_token", data.token)
+        localStorage.setItem("kairos_user_id", data.user_id)
 
         setSuccess("Inicio de sesión exitoso. Redirigiendo...")
 
         setTimeout(() => {
           router.push("/dashboard")
         }, 1000)
-      } catch (error) {
-        setError("Error al guardar los datos de sesión. Intenta nuevamente.")
-      }
-
-      setIsLoading(false)
-      return
-    }
-
-    try {
-      // TODO: Replace with actual API call
-      const response = await fetch(`${config.apiUrl}/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(loginData),
-      })
-
-      if (response.ok) {
-        setSuccess("Inicio de sesión exitoso. Redirigiendo...")
-        // TODO: Handle successful login (store token, redirect)
-        setTimeout(() => {
-          router.push("/dashboard")
-        }, 2000)
       } else {
         const errorData = await response.json()
         setError(errorData.message || "Error al iniciar sesión")
       }
     } catch (error) {
-      setError("Error de conexión. Para probar, usa: demo@kairos.com / demo123")
+      setError("Error de conexión. Por favor, intenta nuevamente.")
     } finally {
       setIsLoading(false)
     }
@@ -114,58 +86,23 @@ export default function AuthPage() {
     setError("")
     setSuccess("")
 
-    // Validate passwords match
     if (registerData.password !== registerData.confirmPassword) {
       setError("Las contraseñas no coinciden")
       setIsLoading(false)
       return
     }
 
-    // Validate password strength
     if (registerData.password.length < 8) {
       setError("La contraseña debe tener al menos 8 caracteres")
       setIsLoading(false)
       return
     }
 
-    try {
-      // TODO: Replace with actual API call
-      const response = await fetch(`${config.apiUrl}/auth/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          firstName: registerData.firstName,
-          lastName: registerData.lastName,
-          email: registerData.email,
-          password: registerData.password,
-        }),
-      })
-
-      if (response.ok) {
-        setSuccess("Registro exitoso. Por favor, verifica tu email.")
-        // Reset form
-        setRegisterData({
-          firstName: "",
-          lastName: "",
-          email: "",
-          password: "",
-          confirmPassword: "",
-        })
-      } else {
-        const errorData = await response.json()
-        setError(errorData.message || "Error al registrarse")
-      }
-    } catch (error) {
-      setError("Error de conexión. Por favor, intenta nuevamente.")
-    } finally {
-      setIsLoading(false)
-    }
+    setError("El registro estará disponible próximamente. Por favor, contacta al administrador.")
+    setIsLoading(false)
   }
 
   const handleGoogleLogin = () => {
-    // TODO: Implement Google OAuth
     setError("Google SSO estará disponible próximamente")
   }
 
@@ -177,20 +114,8 @@ export default function AuthPage() {
         <div className="max-w-md mx-auto">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-foreground mb-2">Bienvenido a Kairos</h1>
-            <p className="text-muted-foreground">Accede a tu cuenta o crea una nueva para comenzar a invertir</p>
+            <p className="text-muted-foreground">Accede a tu cuenta para comenzar a invertir</p>
           </div>
-
-          <Alert className="mb-4 border-blue-500/50 bg-blue-500/10">
-            <AlertDescription className="text-center">
-              <p className="font-semibold text-blue-400 mb-1">Demo de Prueba</p>
-              <p className="text-sm text-blue-300">
-                Email: <code className="bg-blue-950/50 px-2 py-0.5 rounded">demo@kairos.com</code>
-              </p>
-              <p className="text-sm text-blue-300">
-                Password: <code className="bg-blue-950/50 px-2 py-0.5 rounded">demo123</code>
-              </p>
-            </AlertDescription>
-          </Alert>
 
           <Card>
             <CardHeader>

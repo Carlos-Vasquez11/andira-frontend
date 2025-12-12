@@ -10,93 +10,6 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Search, TrendingUp, TrendingDown, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react"
 
-const allStocks = [
-  {
-    symbol: "BANESCO",
-    name: "Banesco Banco Universal",
-    priceUSD: 12.45,
-    change: 2.3,
-    logo: "/banesco-logo.jpg",
-  },
-  {
-    symbol: "POLAR",
-    name: "Empresas Polar",
-    priceUSD: 28.9,
-    change: -1.2,
-    logo: "/polar-logo.jpg",
-  },
-  {
-    symbol: "CANTV",
-    name: "CANTV",
-    priceUSD: 8.75,
-    change: 0.8,
-    logo: "/cantv-logo.jpg",
-  },
-  {
-    symbol: "DIGITEL",
-    name: "Digitel",
-    priceUSD: 15.6,
-    change: 3.1,
-    logo: "/digitel-logo.jpg",
-  },
-  {
-    symbol: "MOVILNET",
-    name: "Movilnet",
-    priceUSD: 5.25,
-    change: -0.5,
-    logo: "/movilnet-logo.jpg",
-  },
-  {
-    symbol: "MERCANTIL",
-    name: "Banco Mercantil",
-    priceUSD: 18.3,
-    change: 1.7,
-    logo: "/mercantil-logo.jpg",
-  },
-  {
-    symbol: "PROVINCIAL",
-    name: "Banco Provincial",
-    priceUSD: 14.8,
-    change: -2.1,
-    logo: "/provincial-logo.jpg",
-  },
-  {
-    symbol: "VENEZOLANO",
-    name: "Banco Venezolano de Crédito",
-    priceUSD: 9.6,
-    change: 0.3,
-    logo: "/venezolano-logo.jpg",
-  },
-  {
-    symbol: "ELECTRICIDAD",
-    name: "Electricidad de Caracas",
-    priceUSD: 22.4,
-    change: 4.2,
-    logo: "/electricidad-logo.jpg",
-  },
-  {
-    symbol: "SIDERURGICA",
-    name: "Siderúrgica del Orinoco",
-    priceUSD: 11.2,
-    change: -3.5,
-    logo: "/siderurgica-logo.jpg",
-  },
-  {
-    symbol: "MAVESA",
-    name: "Mavesa",
-    priceUSD: 7.8,
-    change: 1.2,
-    logo: "/mavesa-logo.jpg",
-  },
-  {
-    symbol: "CORIMON",
-    name: "Corimon",
-    priceUSD: 16.5,
-    change: 2.8,
-    logo: "/corimon-logo.jpg",
-  },
-]
-
 type SortOption = "alphabetical" | "variation-high" | "variation-low" | "none"
 
 export default function MercadoPage() {
@@ -107,6 +20,7 @@ export default function MercadoPage() {
   const [sortBy, setSortBy] = useState<SortOption>("none")
   const [currency, setCurrency] = useState<"USD" | "VEF">("USD")
   const [exchangeRate] = useState(36.5)
+  const [allStocks, setAllStocks] = useState<any[]>([])
 
   useEffect(() => {
     const checkAuth = () => {
@@ -143,6 +57,20 @@ export default function MercadoPage() {
 
     checkAuth()
   }, [router])
+
+  useEffect(() => {
+    const fetchStocks = async () => {
+      try {
+        const response = await fetch("https://api.example.com/stocks") // Replace with actual API endpoint
+        const data = await response.json()
+        setAllStocks(data)
+      } catch (error) {
+        console.error("Error fetching stocks:", error)
+      }
+    }
+
+    fetchStocks()
+  }, [])
 
   const filteredAndSortedStocks = () => {
     let stocks = [...allStocks]

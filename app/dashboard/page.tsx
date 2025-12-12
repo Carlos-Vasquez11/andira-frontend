@@ -15,162 +15,6 @@ import { DepositModal } from "@/components/deposit-modal"
 import { WithdrawModal } from "@/components/withdraw-modal"
 import { ArrowUpRight, ArrowDownRight, TrendingUp, TrendingDown, Eye, EyeOff, PieChart } from "lucide-react"
 
-const mockHoldings = [
-  {
-    symbol: "BANESCO",
-    name: "Banesco Banco Universal",
-    shares: 150,
-    priceUSD: 12.45,
-    priceVEF: 12.45 * 36.5,
-    change: 2.3,
-    logo: "/banesco-logo.jpg",
-    averagePurchasePrice: 11.8,
-    initialValue: 11.8 * 150,
-    averageHoldingDays: 45,
-    totalReturn: 8.2,
-  },
-  {
-    symbol: "POLAR",
-    name: "Empresas Polar",
-    shares: 75,
-    priceUSD: 28.9,
-    priceVEF: 28.9 * 36.5,
-    change: -1.2,
-    logo: "/polar-logo.jpg",
-    averagePurchasePrice: 30.2,
-    initialValue: 30.2 * 75,
-    averageHoldingDays: 62,
-    totalReturn: -4.3,
-  },
-  {
-    symbol: "CANTV",
-    name: "CANTV",
-    shares: 200,
-    priceUSD: 8.75,
-    priceVEF: 8.75 * 36.5,
-    change: 0.8,
-    logo: "/cantv-logo.jpg",
-    averagePurchasePrice: 8.5,
-    initialValue: 8.5 * 200,
-    averageHoldingDays: 30,
-    totalReturn: 2.9,
-  },
-  {
-    symbol: "DIGITEL",
-    name: "Digitel",
-    shares: 100,
-    priceUSD: 15.6,
-    priceVEF: 15.6 * 36.5,
-    change: 3.1,
-    logo: "/digitel-logo.jpg",
-    averagePurchasePrice: 14.9,
-    initialValue: 14.9 * 100,
-    averageHoldingDays: 21,
-    totalReturn: 4.7,
-  },
-]
-
-const mockOrders: Order[] = [
-  {
-    id: "ORD-2024-001234",
-    type: "Compra",
-    status: "Ejecutada",
-    amount: 1867.5,
-    date: "15/01/2025",
-    stockName: "BANESCO",
-    currency: "Bolívares",
-    orderType: "Mercado",
-    quantity: 150,
-    averagePrice: 12.45,
-    market: "BVC",
-    emissionDate: "15/01/2025",
-  },
-  {
-    id: "ORD-2024-001235",
-    type: "Compra USDT",
-    status: "Ejecutada",
-    amount: 500.0,
-    date: "18/01/2025",
-    currency: "USDT",
-    market: "Banco Central de Venezuela",
-    emissionDate: "18/01/2025",
-  },
-  {
-    id: "ORD-2024-001236",
-    type: "Venta",
-    status: "Pendiente de Liquidación",
-    amount: 2167.5,
-    date: "20/01/2025",
-    stockName: "POLAR",
-    currency: "Bolívares",
-    orderType: "Límite",
-    quantity: 75,
-    averagePrice: 28.9,
-    market: "BVC",
-    emissionDate: "20/01/2025",
-  },
-  {
-    id: "ORD-2024-001237",
-    type: "Transferencia",
-    status: "Ejecutada",
-    amount: 1000.0,
-    date: "22/01/2025",
-    currency: "Bolívares",
-    market: "Banco Central de Venezuela",
-    emissionDate: "22/01/2025",
-    direction: "Depósito",
-  },
-  {
-    id: "ORD-2024-001238",
-    type: "Compra",
-    status: "Pendiente",
-    amount: 1750.0,
-    date: "25/01/2025",
-    stockName: "CANTV",
-    currency: "Bolívares",
-    orderType: "Límite",
-    quantity: 200,
-    averagePrice: 8.75,
-    market: "BVC",
-    emissionDate: "25/01/2025",
-  },
-  {
-    id: "ORD-2024-001239",
-    type: "Venta USDT",
-    status: "Ejecutada",
-    amount: 300.0,
-    date: "28/01/2025",
-    currency: "USDT",
-    market: "Banco Central de Venezuela",
-    emissionDate: "28/01/2025",
-  },
-  {
-    id: "ORD-2024-001240",
-    type: "Venta",
-    status: "Cancelada",
-    amount: 1560.0,
-    date: "30/01/2025",
-    stockName: "DIGITEL",
-    currency: "Bolívares",
-    orderType: "Mercado",
-    quantity: 100,
-    averagePrice: 15.6,
-    market: "BVC",
-    emissionDate: "30/01/2025",
-  },
-  {
-    id: "ORD-2024-001241",
-    type: "Transferencia",
-    status: "Ejecutada",
-    amount: 2500.0,
-    date: "02/02/2025",
-    currency: "Bolívares",
-    market: "Banco Central de Venezuela",
-    emissionDate: "02/02/2025",
-    direction: "Retiro",
-  },
-]
-
 export default function DashboardPage() {
   const router = useRouter()
   const [currency, setCurrency] = useState<"USDT" | "VEF">("VEF")
@@ -187,6 +31,9 @@ export default function DashboardPage() {
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false)
   const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false)
 
+  const [holdings, setHoldings] = useState<any[]>([])
+  const [orders, setOrders] = useState<Order[]>([])
+
   useEffect(() => {
     const checkAuth = () => {
       const urlParams = new URLSearchParams(window.location.search)
@@ -197,8 +44,8 @@ export default function DashboardPage() {
           lastName: "Prueba",
           email: "test@kairos.com",
           avatar: "/generic-user-avatar.svg",
-          balanceUSDT: 500.0,
-          cashVEF: 350000.0,
+          balanceUSDT: 0,
+          cashVEF: 0,
         })
         setIsLoading(false)
         return
@@ -216,8 +63,8 @@ export default function DashboardPage() {
         const parsedUser = JSON.parse(userData)
         setUser({
           ...parsedUser,
-          balanceUSDT: 500.0,
-          cashVEF: 350000.0,
+          balanceUSDT: 0,
+          cashVEF: 0,
         })
       } catch (error) {
         console.error("Error parsing user data:", error)
@@ -253,7 +100,7 @@ export default function DashboardPage() {
     setIsOrderModalOpen(true)
   }
 
-  const totalPortfolioValue = mockHoldings.reduce((sum, holding) => sum + holding.priceUSD * holding.shares, 0)
+  const totalPortfolioValue = holdings.reduce((sum, holding) => sum + holding.priceUSD * holding.shares, 0)
 
   if (isLoading) {
     return (
@@ -270,7 +117,7 @@ export default function DashboardPage() {
     return null
   }
 
-  const investmentsValueVEF = mockHoldings.reduce((sum, holding) => sum + holding.priceVEF * holding.shares, 0)
+  const investmentsValueVEF = holdings.reduce((sum, holding) => sum + holding.priceVEF * holding.shares, 0)
   const totalBalanceVEF = user.cashVEF + investmentsValueVEF + user.balanceUSDT * exchangeRate
   const totalBalance = currency === "USDT" ? totalBalanceVEF / exchangeRate : totalBalanceVEF
 
@@ -387,9 +234,10 @@ export default function DashboardPage() {
             <CardContent>
               <div className="overflow-x-auto -mx-4 px-4">
                 <div className="flex space-x-4 pb-4">
-                  {mockOrders.map((order) => (
+                  {orders.map((order) => (
                     <OrderHistoryCard key={order.id} order={order} onClick={() => handleOrderClick(order)} />
                   ))}
+                  {orders.length === 0 && <p className="text-muted-foreground text-sm">No hay órdenes recientes</p>}
                 </div>
               </div>
             </CardContent>
@@ -402,7 +250,7 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {mockHoldings.map((holding) => {
+                {holdings.map((holding) => {
                   const currentValue = holding.priceUSD * holding.shares
                   const total = getPrice(currentValue)
 
@@ -484,10 +332,10 @@ export default function DashboardPage() {
                 })}
               </div>
 
-              {mockHoldings.length === 0 && (
+              {holdings.length === 0 && (
                 <div className="text-center py-12">
                   <p className="text-muted-foreground mb-4">Aún no tienes inversiones</p>
-                  <Button>Explorar Mercado</Button>
+                  <Button onClick={() => router.push("/mercado")}>Explorar Mercado</Button>
                 </div>
               )}
             </CardContent>
@@ -533,89 +381,8 @@ export default function DashboardPage() {
                   <CardContent className="p-4 text-center">
                     <p className="text-sm text-muted-foreground mb-1">Valor Inicial</p>
                     <p className="text-2xl font-bold text-foreground">
-                      {formatCurrency(getPrice(selectedStock.initialValue))}
+                      {formatCurrency(getPrice(selectedStock.initialValue || 0))}
                     </p>
-                  </CardContent>
-                </Card>
-              </div>
-
-              <Card className="bg-primary/5 border-primary/20">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="text-sm font-medium text-foreground">Representación de mis Tenencias</p>
-                    <p className="text-2xl font-bold text-foreground">
-                      {((selectedStock.priceUSD * selectedStock.shares * 100) / totalBalance).toFixed(1)}%
-                    </p>
-                  </div>
-                  <div className="w-full bg-muted/50 border border-border/30 rounded-full h-3">
-                    <div
-                      className="bg-foreground h-3 rounded-full transition-all"
-                      style={{
-                        width: `${Math.min((selectedStock.priceUSD * selectedStock.shares * 100) / totalBalance, 100)}%`,
-                      }}
-                    />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <div className="grid grid-cols-3 gap-4">
-                <Card>
-                  <CardContent className="p-4 text-center">
-                    <p className="text-xs text-muted-foreground mb-2">Nominales</p>
-                    <p className="text-xl font-bold text-foreground">{selectedStock.shares}</p>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="p-4 text-center">
-                    <p className="text-xs text-muted-foreground mb-2">Precio Promedio de Compra</p>
-                    <p className="text-xl font-bold text-foreground">
-                      {formatCurrency(getPrice(selectedStock.averagePurchasePrice))}
-                    </p>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardContent className="p-4 text-center">
-                    <p className="text-xs text-muted-foreground mb-2">Precio Actual</p>
-                    <p className="text-xl font-bold text-foreground">
-                      {formatCurrency(getPrice(selectedStock.priceUSD))}
-                    </p>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Performance metrics */}
-              <div className="grid grid-cols-2 gap-4">
-                <Card
-                  className={
-                    selectedStock.totalReturn >= 0
-                      ? "bg-green-700/10 border-green-700/30"
-                      : "bg-red-700/10 border-red-700/30"
-                  }
-                >
-                  <CardContent className="p-4 text-center">
-                    <p className="text-sm text-muted-foreground mb-1">Rendimiento Total</p>
-                    <div className="flex items-center justify-center space-x-2">
-                      {selectedStock.totalReturn >= 0 ? (
-                        <TrendingUp className="h-5 w-5 text-green-700" />
-                      ) : (
-                        <TrendingDown className="h-5 w-5 text-red-700" />
-                      )}
-                      <p
-                        className={`text-2xl font-bold ${selectedStock.totalReturn >= 0 ? "text-green-700" : "text-red-700"}`}
-                      >
-                        {selectedStock.totalReturn >= 0 ? "+" : ""}
-                        {selectedStock.totalReturn}%
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="bg-muted/50">
-                  <CardContent className="p-4 text-center">
-                    <p className="text-sm text-muted-foreground mb-1">Días Promedio de Tenencia</p>
-                    <p className="text-2xl font-bold text-foreground">{selectedStock.averageHoldingDays} días</p>
                   </CardContent>
                 </Card>
               </div>
@@ -624,20 +391,21 @@ export default function DashboardPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Order Details Modal */}
+      {/* Modals */}
       <OrderDetailsModal order={selectedOrder} isOpen={isOrderModalOpen} onClose={() => setIsOrderModalOpen(false)} />
 
-      {/* Deposit Modal */}
-      <DepositModal isOpen={isDepositModalOpen} onClose={() => setIsDepositModalOpen(false)} />
+      <DepositModal
+        isOpen={isDepositModalOpen}
+        onClose={() => setIsDepositModalOpen(false)}
+        userBalance={{ balanceUSDT: user?.balanceUSDT || 0, cashVEF: user?.cashVEF || 0 }}
+      />
 
-      {/* Withdraw Modal */}
       <WithdrawModal
         isOpen={isWithdrawModalOpen}
         onClose={() => setIsWithdrawModalOpen(false)}
-        balanceVEF={user?.cashVEF || 0}
-        balanceUSDT={user?.balanceUSDT || 0}
+        userBalance={{ balanceUSDT: user?.balanceUSDT || 0, cashVEF: user?.cashVEF || 0 }}
       />
-      {/* Mobile Footer Navigation */}
+
       <MobileFooterNav />
     </div>
   )

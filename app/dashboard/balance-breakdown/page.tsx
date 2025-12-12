@@ -36,6 +36,7 @@ export default function BalanceBreakdownPage() {
   const [user, setUser] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [exchangeRate] = useState(36.5)
+  const [holdings, setHoldings] = useState<any[]>([])
 
   useEffect(() => {
     const checkAuth = () => {
@@ -96,7 +97,7 @@ export default function BalanceBreakdownPage() {
     return null
   }
 
-  const investmentsValueVEF = mockHoldings.reduce((sum, holding) => sum + holding.shares * holding.priceVEF, 0)
+  const investmentsValueVEF = holdings.reduce((sum, holding) => sum + holding.shares * holding.priceVEF, 0)
   const usdtValueVEF = user.balanceUSDT * exchangeRate
   const totalBalanceVEF = user.cashVEF + investmentsValueVEF + usdtValueVEF
 
